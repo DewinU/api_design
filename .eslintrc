@@ -9,7 +9,7 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "drizzle", "prettier"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "warn"
   }
