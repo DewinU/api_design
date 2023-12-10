@@ -22,6 +22,12 @@ import {
   getProducts,
   updateProduct,
 } from './handlers/product.handlers'
+import {
+  createUpdate,
+  getUpdateById,
+  getUpdates,
+  getUpdatesByProductId,
+} from './handlers/update.handlers'
 
 const router = Router()
 
@@ -42,20 +48,16 @@ router.delete('/products/:id', validate(deleteProductSchema), deleteProduct)
  * Update
  */
 
-router.get('/products/:productId/updates', (req, res) => {
-  res.json({ message: 'show updates' })
-})
+router.get('/updates', getUpdates)
 
-router.get('/updates/:id', (req, res) => {
-  res.json({ message: `show update ${req.params.id}` })
-})
+router.get('/products/:productId/updates', getUpdatesByProductId)
+
+router.get('/updates/:id', getUpdateById)
 
 router.post(
   '/products/:productId/updates',
   validate(createUpdateSchema),
-  (req, res) => {
-    res.status(201).json({ message: 'create update' })
-  },
+  createUpdate,
 )
 
 router.put('/updates/:id', validate(updateUpdateSchema), (req, res) => {

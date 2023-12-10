@@ -8,6 +8,9 @@ export const getProducts: RequestHandler = async (req, res) => {
     where: eq(products.userId, req.user?.id),
   })
 
+  if (!payload || payload.length === 0)
+    return res.status(404).json({ message: 'Products not found' })
+
   res.json({ data: payload })
 }
 

@@ -2,19 +2,17 @@ import z from 'zod'
 
 export const createUpdateSchema = z.object({
   body: z.object({
-    productId: z.string({
-      required_error: 'Product identifier is required',
-      invalid_type_error: 'Product identifier is required',
-    }),
     title: z.string({
       required_error: 'Title is required',
       invalid_type_error: 'Title is required',
     }),
-    status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'SHIPPED'], {
-      description: 'Status of the update',
-      required_error: 'Status is required',
-      invalid_type_error: 'Status is required',
-    }),
+    status: z
+      .enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'SHIPPED'], {
+        description: 'Status of the update',
+        required_error: 'Status is required',
+        invalid_type_error: 'Status is required',
+      })
+      .optional(),
     description: z.string({
       required_error: 'Description is required',
       invalid_type_error: 'Description is required',
@@ -25,7 +23,7 @@ export const createUpdateSchema = z.object({
         invalid_type_error: 'Version is required',
       })
       .optional(),
-    media: z.string({}).optional(),
+    media: z.string().optional(),
   }),
 })
 

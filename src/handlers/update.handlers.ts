@@ -6,6 +6,7 @@ import { and, eq } from 'drizzle-orm'
 export const getUpdates: RequestHandler = async (req, res) => {
   const payload = await db
     .select({
+      id: updates.id,
       productId: updates.productId,
       title: updates.title,
       description: updates.description,
@@ -25,9 +26,10 @@ export const getUpdates: RequestHandler = async (req, res) => {
   res.json({ data: payload })
 }
 
-export const getUpdatesByProduct: RequestHandler = async (req, res) => {
+export const getUpdatesByProductId: RequestHandler = async (req, res) => {
   const payload = await db
     .select({
+      id: updates.id,
       productId: updates.productId,
       title: updates.title,
       description: updates.description,
@@ -53,8 +55,9 @@ export const getUpdatesByProduct: RequestHandler = async (req, res) => {
 }
 
 export const getUpdateById: RequestHandler = async (req, res) => {
-  const [payload] = await db
+  const payload = await db
     .select({
+      id: updates.id,
       productId: updates.productId,
       title: updates.title,
       description: updates.description,
@@ -67,11 +70,10 @@ export const getUpdateById: RequestHandler = async (req, res) => {
     .from(updates)
     .leftJoin(products, eq(updates.productId, products.id))
     .where(
-      and(
-        eq(updates.id, req.params.updateId),
-        eq(products.userId, req.user?.id),
-      ),
+      and(eq(updates.id, req.params.id), eq(products.userId, req.user?.id)),
     )
+
+  console.log('payload', payload)
 
   if (!payload) return res.status(404).json({ message: 'Update not found' })
 
