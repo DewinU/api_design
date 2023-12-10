@@ -18,7 +18,9 @@ export const register: RequestHandler = async (req, res) => {
     where: eq(users.username, username),
   })
   if (userExists)
-    return res.status(400).json({ message: 'User already exists' })
+    return res
+      .status(400)
+      .json({ message: 'This username is taken', error: 'register' })
   //   console.log('username', username)
   //   console.log('password', password)
   const hashedPassword = await hashPassword(password)

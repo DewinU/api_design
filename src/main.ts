@@ -33,7 +33,7 @@ app.get(
   customMiddleware('Test 2'),
   (req, res) => {
     console.log('hello world from express')
-    res.status(201).json({ message: 'hello world' })
+    res.status(200).json({ message: 'hello world from express' })
   },
 )
 
