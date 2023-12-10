@@ -1,66 +1,95 @@
 import { RequestHandler } from 'express'
-import prisma from '../modules/db.modules'
+import db from '../db/drizzle'
+import { products, updates } from '../db/schema'
+import { and, eq } from 'drizzle-orm'
 
 export const getUpdates: RequestHandler = async (req, res) => {
-  const products = await prisma.product.findMany({
-    where: {
-      userId: req.user.id,
-    },
-  })
+  const payload = await db
+    .select({
+      productId: updates.productId,
+      title: updates.title,
+      description: updates.description,
+      status: updates.status,
+      version: updates.version,
+      media: updates.media,
+      createdAt: updates.createdAt,
+      updatedAt: updates.updatedAt,
+    })
+    .from(updates)
+    .leftJoin(products, eq(updates.productId, products.id))
+    .where(eq(products.userId, req.user?.id))
 
-  const updates = await prisma.update.findMany({
-    where: {
-      productId: {
-        in: products.map(product => product.id),
-      },
-    },
-  })
+  if (!payload || payload.length === 0)
+    return res.status(404).json({ message: 'Updates not found' })
 
-  res.json({ data: updates })
+  res.json({ data: payload })
 }
 
 export const getUpdatesByProduct: RequestHandler = async (req, res) => {
-  const product = await prisma.product.findUniqueOrThrow({
-    where: {
-      id: req.params.productId,
-      userId: req.user?.id,
-    },
-  })
+  const payload = await db
+    .select({
+      productId: updates.productId,
+      title: updates.title,
+      description: updates.description,
+      status: updates.status,
+      version: updates.version,
+      media: updates.media,
+      createdAt: updates.createdAt,
+      updatedAt: updates.updatedAt,
+    })
+    .from(updates)
+    .leftJoin(products, eq(updates.productId, products.id))
+    .where(
+      and(
+        eq(products.id, req.params.productId),
+        eq(products.userId, req.user?.id),
+      ),
+    )
 
-  const updates = await prisma.update.findMany({
-    where: {
-      productId: product.id,
-    },
-  })
+  if (!payload || payload.length === 0)
+    return res.status(404).json({ message: 'Updates not found' })
 
-  res.json({ data: updates })
+  res.json({ data: payload })
 }
 
 export const getUpdateById: RequestHandler = async (req, res) => {
-  const update = await prisma.update.findUniqueOrThrow({
-    where: {
-      productId: req.params.productId,
-      id: req.params.id,
-    },
-  })
+  const [payload] = await db
+    .select({
+      productId: updates.productId,
+      title: updates.title,
+      description: updates.description,
+      status: updates.status,
+      version: updates.version,
+      media: updates.media,
+      createdAt: updates.createdAt,
+      updatedAt: updates.updatedAt,
+    })
+    .from(updates)
+    .leftJoin(products, eq(updates.productId, products.id))
+    .where(
+      and(
+        eq(updates.id, req.params.updateId),
+        eq(products.userId, req.user?.id),
+      ),
+    )
 
-  res.json({ data: update })
+  if (!payload) return res.status(404).json({ message: 'Update not found' })
+
+  res.json({ data: payload })
 }
 
 export const createUpdate: RequestHandler = async (req, res) => {
-  const product = await prisma.product.findUniqueOrThrow({
-    where: {
-      id: req.params.productId,
-      userId: req.user?.id,
-    },
-  })
+  const [payload] = await db
+    .insert(updates)
+    .values({
+      productId: req.params.productId,
+      title: req.body.title,
+      description: req.body.description,
+      status: req.body.status,
+      version: req.body.version,
+      media: req.body.media,
+    })
+    .returning()
 
-  const update = await prisma.update.create({
-    data: {
-      ...req.body,
-      productId: product.id,
-    },
-  })
-
-  res.status(201).json({ data: update })
+  res.status(201).json({ data: payload })
 }

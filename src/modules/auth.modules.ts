@@ -1,8 +1,8 @@
 import type { RequestHandler } from 'express'
 import { SignJWT, jwtVerify } from 'jose'
 import bycript from 'bcrypt'
-import type { User } from '@prisma/client'
 import { createSecretKey } from 'crypto'
+import { User } from '../db/schema'
 
 const secret = createSecretKey(process.env.JWT_SECRET!, 'utf-8')
 

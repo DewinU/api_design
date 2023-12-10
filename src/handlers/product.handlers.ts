@@ -1,57 +1,66 @@
 import type { RequestHandler } from 'express'
-import prisma from '../modules/db.modules'
+import db from '../db/drizzle'
+import { products } from '../db/schema'
+import { and, eq } from 'drizzle-orm'
 
 export const getProducts: RequestHandler = async (req, res) => {
-  const products = await prisma.product.findMany({
-    where: {
-      userId: req.user?.id,
-    },
+  const payload = await db.query.products.findMany({
+    where: eq(products.userId, req.user?.id),
   })
 
-  res.json({ data: products })
+  res.json({ data: payload })
 }
 
 export const getProductById: RequestHandler = async (req, res) => {
-  const product = await prisma.product.findUniqueOrThrow({
-    where: {
-      id: req.params.id,
-      userId: req.user?.id,
-    },
+  const payload = await db.query.products.findFirst({
+    where: and(
+      eq(products.id, req.params.id),
+      eq(products.userId, req.user.id),
+    ),
   })
 
-  res.json({ data: product })
+  if (!payload) return res.status(404).json({ message: 'Product not found' })
+
+  res.json({ data: payload })
 }
 
 export const createProduct: RequestHandler = async (req, res) => {
-  const product = await prisma.product.create({
-    data: {
+  const [payload] = await db
+    .insert(products)
+    .values({
       name: req.body.name,
       userId: req.user?.id,
-    },
-  })
+    })
+    .returning()
 
-  res.status(201).json({ data: product })
+  res.status(201).json({ data: payload })
 }
 
 export const updateProduct: RequestHandler = async (req, res) => {
-  const product = await prisma.product.update({
-    where: {
-      id: req.params.id,
-      userId: req.user?.id,
-    },
-    data: req.body,
-  })
+  const [payload] = await db
+    .update(products)
+    .set({
+      name: req.body.name,
+    })
+    .where(
+      and(eq(products.id, req.params.id), eq(products.userId, req.user.id)),
+    )
+    .returning()
 
-  res.json({ data: product })
+  if (!payload) return res.status(404).json({ message: 'Product not found' })
+
+  res.json({ data: payload })
 }
 
 export const deleteProduct: RequestHandler = async (req, res) => {
-  await prisma.product.delete({
-    where: {
-      id: req.params.id,
-      userId: req.user?.id,
-    },
-  })
+  const [payload] = await db
+    .delete(products)
+    .where(
+      and(eq(products.id, req.params.id), eq(products.userId, req.user.id)),
+    )
+    .returning()
+
+  if (!payload) return res.status(404).json({ message: 'Product not found' })
 
   res.status(200).json({ message: 'Product deleted' })
 }
