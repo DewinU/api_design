@@ -73,25 +73,37 @@ export const getUpdateById: RequestHandler = async (req, res) => {
       and(eq(updates.id, req.params.id), eq(products.userId, req.user?.id)),
     )
 
-  console.log('payload', payload)
-
   if (!payload) return res.status(404).json({ message: 'Update not found' })
 
   res.json({ data: payload })
 }
 
 export const createUpdate: RequestHandler = async (req, res) => {
-  const [payload] = await db
-    .insert(updates)
-    .values({
-      productId: req.params.productId,
-      title: req.body.title,
-      description: req.body.description,
-      status: req.body.status,
-      version: req.body.version,
-      media: req.body.media,
-    })
-    .returning()
+  try {
+    await db.transaction(async trx => {
+      const product = await trx.query.products.findFirst({
+        where: and(
+          eq(products.userId, req.user?.id),
+          eq(products.id, req.params.productId),
+        ),
+      })
 
-  res.status(201).json({ data: payload })
+      if (!product) {
+        return res.status(403).json({ message: 'You dont have access' })
+      }
+
+      const [payload] = await trx.insert(updates).values({
+        productId: req.params.productId,
+        title: req.body.title,
+        description: req.body.description,
+        status: req.body.status,
+        version: req.body.version,
+        media: req.body.media,
+      })
+
+      res.status(201).json({ data: payload })
+    })
+  } catch (error) {
+    res.status(500).json({ message: 'Something went wrong' })
+  }
 }

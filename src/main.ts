@@ -6,7 +6,7 @@ import path from 'path'
 import favicon from 'serve-favicon'
 import helmet from 'helmet'
 import router from './router'
-import type { RequestHandler } from 'express'
+import type { RequestHandler, ErrorRequestHandler } from 'express'
 import { protect } from './modules/auth.modules'
 import { login, register } from './handlers/user.handlers'
 import { validate } from './modules/validation.modules'
@@ -22,17 +22,24 @@ app.use(favicon(path.join(__dirname, '..', 'public', 'favicon.ico')))
 
 const customMiddleware =
   (message: string): RequestHandler =>
-  (req, res, next) => {
+  async (req, res, next) => {
     console.log(message)
     next()
   }
+
+const errorHandler: ErrorRequestHandler = async (err, req, res, next) => {
+  console.log(err)
+  res.status(err.status || 500).json({
+    message: err.message || 'Something went wrong',
+    error: err.type || 'unknown_error',
+  })
+}
 
 app.get(
   '/',
   customMiddleware('Middleware Testing'),
   customMiddleware('Test 2'),
-  (req, res) => {
-    console.log('hello world from express')
+  async (req, res) => {
     res.status(200).json({ message: 'hello world from express' })
   },
 )
@@ -41,6 +48,8 @@ app.post('/register', validate(registerSchema), register)
 app.post('/login', validate(loginSchema), login)
 
 app.use(protect, router)
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 6969
 
