@@ -10,6 +10,7 @@
     "coverage": "c8 --reporter=html --reporter=text-summary tsx --test __tests__/**/*.ts",
     "generate": "drizzle-kit generate:pg",
     "migrate": "tsx drizzle/migrate.ts",
+    "seed": "tsx drizzle/seed.ts",
     "drop": "drizzle-kit drop",
     "studio": "drizzle-kit studio",
     "start": "node dist/main.js",
