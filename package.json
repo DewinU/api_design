@@ -12,6 +12,7 @@
     "migrate": "tsx drizzle/migrate.ts",
     "seed": "tsx drizzle/seed.ts",
     "drop": "drizzle-kit drop",
+    "swagger": "tsx swagger.ts",
     "studio": "drizzle-kit studio",
     "start": "node dist/main.js",
     "format": "prettier --write \"src/**/*.ts\"  \"tests/**/*.ts\"",
@@ -35,6 +36,7 @@
     "morgan": "^1.10.0",
     "postgres": "^3.4.3",
     "serve-favicon": "^2.5.0",
+    "swagger-ui-express": "^5.0.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -53,6 +55,7 @@
     "eslint-plugin-prettier": "^5.0.1",
     "prettier": "^3.1.1",
     "supertest": "^6.3.3",
+    "swagger-autogen": "^2.23.7",
     "tsx": "^4.6.2",
     "typescript": "^5.3.3"
   }

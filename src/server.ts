@@ -5,7 +5,9 @@ import morgan from 'morgan'
 import path from 'path'
 import favicon from 'serve-favicon'
 import helmet from 'helmet'
-import router from './router'
+import router from './routes/router'
+import swaggerUi from 'swagger-ui-express'
+import swaggerOutput from './swagger-output.json'
 import type { RequestHandler, ErrorRequestHandler } from 'express'
 import { protect } from './modules/auth.modules'
 import { login, register } from './handlers/user.handlers'
@@ -46,6 +48,7 @@ app.get(
 
 app.post('/register', validate(registerSchema), register)
 app.post('/login', validate(loginSchema), login)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOutput))
 
 app.use(protect, router)
 
