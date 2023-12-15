@@ -11,7 +11,7 @@ import { eq } from 'drizzle-orm'
 
 export const register: RequestHandler = async (req, res, next) => {
   try {
-    const { username, password } = req.body
+    const { username, password, confirmPassword } = req.body
     // const userExists = await db
     //   .select()
     //   .from(users)
