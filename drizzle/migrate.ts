@@ -16,6 +16,7 @@ const main = async () => {
 main()
   .then(async () => {
     await migrationClient.end()
+    process.exit(0)
   })
   .catch(async e => {
     console.error(e)
