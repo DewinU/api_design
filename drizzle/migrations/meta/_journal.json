@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1702171521238,
+      "tag": "0000_glossy_greymalkin",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1702319378354,
+      "tag": "0001_bitter_frightful_four",
+      "breakpoints": true
+    }
+  ]
+}

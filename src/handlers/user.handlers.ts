@@ -1,39 +1,48 @@
-import prisma from '../modules/db.modules'
 import {
   comparePassword,
   createJWT,
   hashPassword,
 } from '../modules/auth.modules'
+import { PostgresError } from 'postgres'
 import type { RequestHandler } from 'express'
+import db from '../db/drizzle'
+import { users } from '../db/schema'
+import { eq } from 'drizzle-orm'
 
-export const register: RequestHandler = async (req, res) => {
-  const { username, password } = req.body
-  const userExists = await prisma.user.findUnique({
-    where: {
-      username,
-    },
-  })
-  if (userExists)
-    return res.status(400).json({ message: 'User already exists' })
-  //   console.log('username', username)
-  //   console.log('password', password)
-  const hashedPassword = await hashPassword(password)
-  const user = await prisma.user.create({
-    data: {
-      username,
-      password: hashedPassword,
-    },
-  })
-  const token = await createJWT(user)
-  res.status(201).json({ token })
+export const register: RequestHandler = async (req, res, next) => {
+  try {
+    const { username, password, confirmPassword } = req.body
+    // const userExists = await db
+    //   .select()
+    //   .from(users)
+    //   .where(eq(users.username, username))
+    // const userExists = await db.query.users.findFirst({
+    //   where: eq(users.username, username),
+    // })
+    // if (userExists)
+    //   return res
+    //     .status(409)
+    //     .json({ message: 'This username is taken', error: 'register' })
+
+    const hashedPassword = await hashPassword(password)
+    const [user] = await db
+      .insert(users)
+      .values({
+        username,
+        password: hashedPassword,
+      })
+      .returning()
+    const token = await createJWT(user)
+    res.status(201).json({ token })
+  } catch (err) {
+    next(err)
+  }
 }
 
 export const login: RequestHandler = async (req, res) => {
   const { username, password } = req.body
-  const user = await prisma.user.findUnique({
-    where: {
-      username,
-    },
+  const user = await db.query.users.findFirst({
+    where: eq(users.username, username),
   })
   if (!user) return res.status(401).json({ message: 'Invalid Credentials' })
   const isValid = await comparePassword(password, user.password)

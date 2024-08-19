@@ -1,8 +1,8 @@
 import type { RequestHandler } from 'express'
-import { SignJWT, jwtVerify } from 'jose'
+import { SignJWT, jwtVerify, errors } from 'jose'
 import bycript from 'bcrypt'
-import type { User } from '@prisma/client'
 import { createSecretKey } from 'crypto'
+import { User } from '../db/schema'
 
 const secret = createSecretKey(process.env.JWT_SECRET!, 'utf-8')
 
@@ -42,15 +42,16 @@ export const protect: RequestHandler = async (req, res, next) => {
 
   const token = bearer.split('Bearer ')[1].trim()
   try {
-    const { payload } = await jwtVerify(token, secret)
+    const { payload, protectedHeader } = await jwtVerify(token, secret)
     req.user = payload
     // console.log('payload', payload)
     // console.log('protectedHeader', protectedHeader)
     next()
   } catch (e) {
-    console.log(e)
-    return res
-      .status(401)
-      .json({ message: 'Invalid Token', error: 'token_error' })
+    if (e instanceof errors.JOSEError) {
+      return res.status(401).json({ message: e.message, error: 'token_error' })
+    }
+    //console.log(e)
+    return next(e)
   }
 }
