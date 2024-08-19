@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import compression from 'compression'
+import cors from 'cors'
 import morgan from 'morgan'
 import path from 'path'
 import favicon from 'serve-favicon'
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 app.use(helmet())
 app.use(favicon(path.join(__dirname, '..', 'public', 'favicon.ico')))
+app.use(cors())
 
 const customMiddleware =
   (message: string): RequestHandler =>
