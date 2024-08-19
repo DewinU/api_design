@@ -5,7 +5,7 @@ import * as schema from '../src/db/schema'
 import { eq } from 'drizzle-orm'
 import { hashPassword } from '../src/modules/auth.modules'
 
-const queryClient = postgres(process.env.DRIZZLE_DATABASE_URL!)
+const queryClient = postgres(process.env.DATABASE_URL!)
 const db = drizzle(queryClient, { schema })
 
 const main = async () => {
