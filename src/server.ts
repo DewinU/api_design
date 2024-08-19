@@ -50,7 +50,7 @@ app.get(
 
 app.post('/register', validate(registerSchema), register)
 app.post('/login', validate(loginSchema), login)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOutput))
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerOutput))
 
 app.use(protect, router)
 
