@@ -10,7 +10,9 @@ class TiktokStrategy extends Strategy {
         authorizationURL: 'https://www.tiktok.com/v2/auth/authorize',
         //TIKTOK FORCES THE TOKEN URL TO HAVE A TRAILING SLASH - IDK WHY THE FUCK
         tokenURL: 'https://open.tiktokapis.com/v2/oauth/token/',
-        scope: ['user.info.profile'],
+        scope: ['user.info.profile', 'user.info.stats', 'video.list'],
+        //TIKTOK USES A COMMA SEPARATOR
+        scopeSeparator: ',',
       },
       function (accessToken, refreshToken, profile, done) {
         // In a real application, you would use the profile information to find or create a user in your database

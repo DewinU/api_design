@@ -10,7 +10,7 @@ class DiscordStrategy extends Strategy {
         callbackURL: '/auth/discord/cb',
         authorizationURL: 'https://discord.com/oauth2/authorize',
         tokenURL: 'https://discord.com/api/oauth2/token',
-        scope: ['email', 'identify'],
+        scope: ['email', 'identify', 'guilds'],
       },
       function (accessToken, refreshToken, profile, done) {
         // In a real application, you would use the profile information to find or create a user in your database
