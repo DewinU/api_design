@@ -8,7 +8,8 @@ class TiktokStrategy extends Strategy {
         clientSecret: process.env.AUTH_TIKTOK_CLIENT_SECRET!,
         callbackURL: '/auth/tiktok/cb',
         authorizationURL: 'https://www.tiktok.com/v2/auth/authorize',
-        tokenURL: 'https://open.tiktokapis.com/v2/oauth/token',
+        //TIKTOK FORCES THE TOKEN URL TO HAVE A TRAILING SLASH - IDK WHY THE FUCK
+        tokenURL: 'https://open.tiktokapis.com/v2/oauth/token/',
         scope: ['user.info.profile'],
       },
       function (accessToken, refreshToken, profile, done) {
