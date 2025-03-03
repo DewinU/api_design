@@ -14,6 +14,7 @@ import { protect } from './modules/auth.modules'
 import { login, register } from './handlers/user.handlers'
 import { validate } from './modules/validation.modules'
 import { loginSchema, registerSchema } from './schemas/user.schemas'
+import authRouter from './auth/auth.router'
 
 const app = express()
 app.use(compression())
@@ -48,9 +49,10 @@ app.get(
   },
 )
 
+app.use('/auth', authRouter)
 app.post('/register', validate(registerSchema), register)
 app.post('/login', validate(loginSchema), login)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOutput))
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerOutput))
 
 app.use(protect, router)
 
