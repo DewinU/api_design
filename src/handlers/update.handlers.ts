@@ -20,8 +20,10 @@ export const getUpdates: RequestHandler = async (req, res) => {
     .leftJoin(products, eq(updates.productId, products.id))
     .where(eq(products.userId, req.user?.id))
 
-  if (!payload || payload.length === 0)
-    return res.status(404).json({ message: 'Updates not found' })
+  if (!payload || payload.length === 0) {
+    res.status(404).json({ message: 'Updates not found' })
+    return
+  }
 
   res.json({ data: payload })
 }
@@ -48,8 +50,10 @@ export const getUpdatesByProductId: RequestHandler = async (req, res) => {
       ),
     )
 
-  if (!payload || payload.length === 0)
-    return res.status(404).json({ message: 'Updates not found' })
+  if (!payload || payload.length === 0) {
+    res.status(404).json({ message: 'Updates not found' })
+    return
+  }
 
   res.json({ data: payload })
 }
@@ -73,7 +77,10 @@ export const getUpdateById: RequestHandler = async (req, res) => {
       and(eq(updates.id, req.params.id), eq(products.userId, req.user?.id)),
     )
 
-  if (!payload) return res.status(404).json({ message: 'Update not found' })
+  if (!payload) {
+    res.status(404).json({ message: 'Update not found' })
+    return
+  }
 
   res.json({ data: payload })
 }
@@ -89,7 +96,8 @@ export const createUpdate: RequestHandler = async (req, res) => {
       })
 
       if (!product) {
-        return res.status(403).json({ message: 'You dont have access' })
+        res.status(403).json({ message: 'You dont have access' })
+        return
       }
 
       const [payload] = await trx.insert(updates).values({

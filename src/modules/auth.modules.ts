@@ -1,10 +1,11 @@
 import type { RequestHandler } from 'express'
-import { SignJWT, jwtVerify, errors } from 'jose'
 import bycript from 'bcrypt'
 import { createSecretKey } from 'crypto'
 import { User } from '../db/schema'
+import { envs } from '../config/envs'
+import { SignJWT, jwtVerify, errors } from 'jose'
 
-const secret = createSecretKey(process.env.JWT_SECRET!, 'utf-8')
+const secret = createSecretKey(envs.jwtSecret, 'utf-8')
 
 export const hashPassword = async (password: string) => {
   return await bycript.hash(password, 10)
@@ -35,10 +36,10 @@ export const createJWT = async (user: User) => {
 
 export const protect: RequestHandler = async (req, res, next) => {
   const bearer = req.headers.authorization
-  if (!bearer || !bearer.startsWith('Bearer '))
-    return res
-      .status(401)
-      .json({ message: 'Please provide token', error: 'token_error' })
+  if (!bearer || !bearer.startsWith('Bearer ')) {
+    res.status(401).json({ message: 'Unauthorized', error: 'unauthorized' })
+    return
+  }
 
   const token = bearer.split('Bearer ')[1].trim()
   try {
@@ -49,7 +50,8 @@ export const protect: RequestHandler = async (req, res, next) => {
     next()
   } catch (e) {
     if (e instanceof errors.JOSEError) {
-      return res.status(401).json({ message: e.message, error: 'token_error' })
+      res.status(401).json({ message: e.message, error: 'token_error' })
+      return
     }
     //console.log(e)
     return next(e)

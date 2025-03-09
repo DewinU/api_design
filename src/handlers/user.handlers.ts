@@ -20,7 +20,7 @@ export const register: RequestHandler = async (req, res, next) => {
     //   where: eq(users.username, username),
     // })
     // if (userExists)
-    //   return res
+    //   res
     //     .status(409)
     //     .json({ message: 'This username is taken', error: 'register' })
 
@@ -34,6 +34,7 @@ export const register: RequestHandler = async (req, res, next) => {
       .returning()
     const token = await createJWT(user)
     res.status(201).json({ token })
+    return
   } catch (err) {
     next(err)
   }
@@ -44,9 +45,16 @@ export const login: RequestHandler = async (req, res) => {
   const user = await db.query.users.findFirst({
     where: eq(users.username, username),
   })
-  if (!user) return res.status(401).json({ message: 'Invalid Credentials' })
+  if (!user) {
+    res.status(401).json({ message: 'Invalid Credentials' })
+    return
+  }
   const isValid = await comparePassword(password, user.password)
-  if (!isValid) return res.status(401).json({ message: 'Invalid Credentials' })
+  if (!isValid) {
+    res.status(401).json({ message: 'Invalid Credentials' })
+    return
+  }
   const token = await createJWT(user)
-  res.json({ token })
+  res.json({ token }).status(200)
+  return
 }

@@ -2,8 +2,9 @@ import 'dotenv/config'
 import postgres from 'postgres'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
+import { envs } from '../src/config/envs'
 
-const migrationClient = postgres(process.env.DATABASE_URL!, { max: 1 })
+const migrationClient = postgres(envs.databaseUrl, { max: 1 })
 
 const main = async () => {
   console.log('migration started...')

@@ -1,12 +1,14 @@
 import { Strategy } from 'passport-oauth2'
+import { envs } from '../../config/envs'
 
 class TiktokStrategy extends Strategy {
   constructor() {
     super(
       {
-        clientID: process.env.AUTH_TIKTOK_CLIENT_ID!,
-        clientSecret: process.env.AUTH_TIKTOK_CLIENT_SECRET!,
-        callbackURL: '/auth/tiktok/cb',
+        clientID: envs.tiktok.id,
+        clientSecret: envs.tiktok.secret,
+        callbackURL:
+          'https://promptly-wondrous-swan.ngrok-free.app/auth/tiktok/cb',
         authorizationURL: 'https://www.tiktok.com/v2/auth/authorize',
         //TIKTOK FORCES THE TOKEN URL TO HAVE A TRAILING SLASH - IDK WHY THE FUCK
         tokenURL: 'https://open.tiktokapis.com/v2/oauth/token/',
@@ -47,15 +49,15 @@ class TiktokStrategy extends Strategy {
 
   authorizationParams(options: any): object {
     return {
-      client_key: process.env.AUTH_TIKTOK_CLIENT_ID!,
-      prompt: 'none',
-      access_type: 'offline',
+      client_key: envs.tiktok.key,
+      // prompt: 'none',
+      // access_type: 'offline',
     }
   }
 
   tokenParams(options: any): object {
     return {
-      client_key: process.env.AUTH_TIKTOK_CLIENT_ID!,
+      client_key: envs.tiktok.key,
     }
   }
 }

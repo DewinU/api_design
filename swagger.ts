@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import swaggerAutogen from 'swagger-autogen'
+import { envs } from './src/config/envs'
 
 const doc = {
   info: {
@@ -9,7 +10,7 @@ const doc = {
   },
   servers: [
     {
-      url: `http://localhost:${process.env.PORT || 6969}`,
+      url: `http://localhost:${envs.port}`,
       description: '',
     },
   ],

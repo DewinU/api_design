@@ -1,12 +1,13 @@
 import { Request } from 'express'
 import { Strategy } from 'passport-oauth2'
+import { envs } from '../../config/envs'
 
 class DiscordStrategy extends Strategy {
   constructor() {
     super(
       {
-        clientID: process.env.AUTH_DISCORD_CLIENT_ID!,
-        clientSecret: process.env.AUTH_DISCORD_CLIENT_SECRET!,
+        clientID: envs.discord.id,
+        clientSecret: envs.discord.secret,
         callbackURL: '/auth/discord/cb',
         authorizationURL: 'https://discord.com/oauth2/authorize',
         tokenURL: 'https://discord.com/api/oauth2/token',

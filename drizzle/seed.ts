@@ -4,8 +4,12 @@ import postgres from 'postgres'
 import * as schema from '../src/db/schema'
 import { eq } from 'drizzle-orm'
 import { hashPassword } from '../src/modules/auth.modules'
+import { envs } from '../src/config/envs'
+import path from 'path'
+import { promises as fs } from 'fs'
 
-const queryClient = postgres(process.env.DATABASE_URL!)
+const queryClient = postgres(envs.databaseUrl)
+console.log(envs.databaseUrl)
 const db = drizzle(queryClient, { schema })
 
 const main = async () => {
@@ -42,6 +46,14 @@ const main = async () => {
     .returning()
   console.log('user_qma', user_qma[0])
   console.log('user_dewinu', user_dewinu[0])
+
+  // Read tasks from task.json
+  const tasksFilePath = path.join(__dirname, 'task.json')
+  const tasksData = await fs.readFile(tasksFilePath, 'utf-8')
+  const tasks = JSON.parse(tasksData)
+
+  // Insert tasks into the database
+  await db.insert(schema.tasks).values(tasks).returning()
 }
 
 main()

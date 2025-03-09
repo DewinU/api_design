@@ -12,11 +12,13 @@ export const validate =
       })
       return next()
     } catch (e) {
-      if (e instanceof z.ZodError)
-        return res.status(400).json({
+      if (e instanceof z.ZodError) {
+        res.status(400).json({
           message: e.errors.map(err => err.message),
           error: 'validation_error',
         })
+        return
+      }
       return next(e)
     }
   }

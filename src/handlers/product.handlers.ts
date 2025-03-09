@@ -8,8 +8,10 @@ export const getProducts: RequestHandler = async (req, res) => {
     where: eq(products.userId, req.user?.id),
   })
 
-  if (!payload || payload.length === 0)
-    return res.status(404).json({ message: 'Products not found' })
+  if (!payload || payload.length === 0) {
+    res.status(404).json({ message: 'Products not found' })
+    return
+  }
 
   res.json({ data: payload })
 }
@@ -22,7 +24,10 @@ export const getProductById: RequestHandler = async (req, res) => {
     ),
   })
 
-  if (!payload) return res.status(404).json({ message: 'Product not found' })
+  if (!payload) {
+    res.status(404).json({ message: 'Product not found' })
+    return
+  }
 
   res.json({ data: payload })
 }
@@ -50,7 +55,10 @@ export const updateProduct: RequestHandler = async (req, res) => {
     )
     .returning()
 
-  if (!payload) return res.status(404).json({ message: 'Product not found' })
+  if (!payload) {
+    res.status(404).json({ message: 'Product not found' })
+    return
+  }
 
   res.json({ data: payload })
 }
@@ -63,7 +71,10 @@ export const deleteProduct: RequestHandler = async (req, res) => {
     )
     .returning()
 
-  if (!payload) return res.status(404).json({ message: 'Product not found' })
+  if (!payload) {
+    res.status(404).json({ message: 'Product not found' })
+    return
+  }
 
   res.status(200).json({ message: 'Product deleted' })
 }

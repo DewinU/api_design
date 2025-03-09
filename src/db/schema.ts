@@ -92,15 +92,55 @@ export const productTags = pgTable(
       .notNull()
       .references(() => tags.id),
   },
-  t => ({
-    pk: primaryKey({
+  // t => ({
+  //   pk: primaryKey({
+  //     columns: [t.productId, t.tagId],
+  //   }),
+  // }),
+  t => [
+    primaryKey({
       columns: [t.productId, t.tagId],
     }),
-  }),
+  ],
 )
 
 export type ProductTag = InferSelectModel<typeof productTags>
 export type NewProductTag = InferInsertModel<typeof productTags>
+
+export const taskStatuses = pgEnum('taskStatuses', [
+  'backlog',
+  'todo',
+  'in progress',
+  'done',
+  'canceled',
+])
+
+export const taskPriorities = pgEnum('taskPriorities', [
+  'low',
+  'medium',
+  'high',
+])
+
+export const taskLabels = pgEnum('taskLabels', [
+  'bug',
+  'feature',
+  'documentation',
+])
+
+export const tasks = pgTable('tasks', {
+  uuid: uuid('uuid').primaryKey().defaultRandom(),
+  id: text('id').notNull(),
+  title: text('title').notNull(),
+  description: text('description'),
+  status: taskStatuses('status').default('backlog'),
+  priority: taskPriorities('priority').default('medium'),
+  label: taskLabels('label').default('feature'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+})
+
+export type Task = InferSelectModel<typeof tasks>
+export type NewTask = InferInsertModel<typeof tasks>
 
 export const userRelations = relations(users, ({ many }) => ({
   products: many(products),

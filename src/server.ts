@@ -54,7 +54,9 @@ app.post('/register', validate(registerSchema), register)
 app.post('/login', validate(loginSchema), login)
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerOutput))
 
-app.use(protect, router)
+// app.use(protect, router)
+
+app.use(router)
 
 app.use(errorHandler)
 

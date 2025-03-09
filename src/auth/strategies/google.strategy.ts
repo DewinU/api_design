@@ -1,11 +1,12 @@
 import OAuth2Strategy from 'passport-oauth2'
+import { envs } from '../../config/envs'
 
 class GoogleStrategy extends OAuth2Strategy {
   constructor() {
     super(
       {
-        clientID: process.env.AUTH_GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET!,
+        clientID: envs.google.id,
+        clientSecret: envs.google.secret,
         callbackURL: '/auth/google/cb',
         authorizationURL: 'https://accounts.google.com/o/oauth2/v2/auth',
         tokenURL: 'https://oauth2.googleapis.com/token',

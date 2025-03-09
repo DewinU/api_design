@@ -1,5 +1,6 @@
 import { Request } from 'express'
 import { Strategy } from 'passport-oauth2'
+import { envs } from '../../config/envs'
 
 // // Define the GitHub OAuth2 strategy
 // const githubStrategy = new Strategy(
@@ -27,8 +28,8 @@ class GithubStrategy extends Strategy {
   constructor() {
     super(
       {
-        clientID: process.env.AUTH_GITHUB_CLIENT_ID!,
-        clientSecret: process.env.AUTH_GITHUB_CLIENT_SECRET!,
+        clientID: envs.github.id,
+        clientSecret: envs.github.secret,
         callbackURL: '/auth/github/cb',
         authorizationURL: 'https://github.com/login/oauth/authorize',
         tokenURL: 'https://github.com/login/oauth/access_token',
